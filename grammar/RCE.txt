@@ -1,0 +1,61 @@
+start : singleInjection | multiInjection;
+singleInjection : orIp commandContext | orIp opSem attriContext;
+multiInjection : orIp opSem middlecom opSem lastcom | orIp opSem dmiddlecom opSem dlastcom | orIp opSem smiddlecom opSem slastcom;
+
+//### Injection Context ###
+commandContext : pipeSymbol backCommand;
+attriContext : operator lt quote backCommand quote rt;
+middlecom : lssplit | pssplit | whoamisplit | routesplit | dirsplit | idsplit | pwdsplit | ifconfigsplit;
+lastcom : opDol chara opDol charb;
+dmiddlecom : smiddlecom space catalogsplit;
+dlastcom : opDol chara opDol charb space opDol charc opDol chard;
+smiddlecom : catsplit | tailsplit | sortsplit | tacsplit | headsplit | nlsplit;
+slastcom : opDol chara opDol charb space catalogvar;
+pipeSymbol : opSem | opDver | opSver | opDtie | opStie;
+backCommand : confusCom | unconfusCom;
+unconfusCom : 'ps' | 'echo' space 'hello' | 'uname' space '-a' | 'id' | 'netstat' space '-a' | 'ls' space '-al' | 'dir' | 'curl' space '127.0.0.1' | 'ifconfig' | 'net' space 'view' | 'pwd'| 'route' | 'whoami' | 'which' space 'mysql' | 'cat' space catalogvar | 'tail' space catalogvar | 'sort' space catalogvar;
+confusCom : 'p' conSym 's' | 'ec' conSym 'ho' space 'hello' | 'una' conSym 'me' space '-a' | 'i' conSym 'd' | 'net' conSym 'stat' space '-a' | 'l' conSym 's' space '-a' conSym 'l' | 'di' conSym 'r' | 'cu' conSym 'rl' space orIp | 'ifco' conSym 'nfig' | 'n' conSym 'et' space 'vi' conSym 'ew' | 'p' conSym 'wd' | 'ro' conSym 'ute' | 'wh' conSym 'oami' | 'whi' conSym 'ch' space 'my' conSym 'sql' | 'c' conSym 'at' space catalogvar | 'ta' conSym 'il' space catalogvar | 's' conSym 'ort' space catalogvar;
+
+//### Operator Split ###
+lssplit : chara opEqual 'l' opSem charb opEqual 's';
+pssplit : chara opEqual 'p' opSem charb opEqual 's';
+catsplit : chara opEqual 'c' opSem charb opEqual 'at' | chara opEqual 'ca' opSem charb opEqual 't';
+tailsplit : chara opEqual 't' opSem charb opEqual 'ail' | chara opEqual 'ta' opSem charb opEqual 'il';
+sortsplit : chara opEqual 'sor' opSem charb opEqual 't' | chara opEqual 's' opSem charb opEqual 'ort';
+tacsplit : chara opEqual 'ta' opSem charb opEqual 'c' | chara opEqual 't' opSem charb opEqual 'ac';
+nlsplit : chara opEqual 'n' opSem charb opEqual 'l';
+headsplit : chara opEqual 'he' opSem charb opEqual 'ad' | chara opEqual 'hea' opSem charb opEqual 'd';
+whoamisplit : chara opEqual 'who' opSem charb opEqual 'ami' | chara opEqual 'wh' opSem charb opEqual 'oami';
+routesplit :  chara opEqual 'rou' opSem charb opEqual 'te' | chara opEqual 'r' opSem charb opEqual 'oute';
+dirsplit : chara opEqual 'd' opSem charb opEqual 'ir' | chara opEqual 'di' opSem charb opEqual 'r';
+idsplit : chara opEqual 'i' opSem charb opEqual 'd';
+pwdsplit : chara opEqual 'pw' opSem charb opEqual 'd' | chara opEqual 'p' opSem charb opEqual 'wd';
+ifconfigsplit : chara opEqual 'if' opSem charb opEqual 'config';
+catalogsplit : chara opEqual '/etc' opSem charb opEqual '/passwd' | chara opEqual '/et' opSem charb opEqual 'c/passwd';
+catalogvar : '/etc/passwd' | '/etc/pa' conSym 'sswd' | '/?t?/pa????';
+conSym : opDol opAt | opDol opStar | opDol terDigitLessTen | opDol lb terDigitMoreTen rb;
+
+//### Operators and constants###
+operator : '$' | '<' | '>' | 'system' | 'exec' | 'eval';
+space : ' ';
+lt : '(';
+rt : ')';
+lb : '{';
+rb : '}';
+orIp : '127.0.0.1';
+quote : '"';
+chara : 'a';
+charb : 'b';
+charc : 'c';
+chard : 'd';
+opSem : ';';
+opAt : '@';
+opStar : '*';
+opDver : '||';
+opEqual : '=';
+opSver : '|';
+opDtie : '&&';
+opStie : '&';
+opDol : '$';
+terDigitLessTen : '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+terDigitMoreTen : '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19';

